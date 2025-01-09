@@ -1,4 +1,5 @@
-﻿using System;
+﻿using cnblogs2typecho.Web;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,39 @@ namespace cnblogs2typecho
     /// </summary>
     public partial class MainWindow : TianXiaTech.BlurWindow
     {
+        private CefSharpWindow cefSharpWindow = new CefSharpWindow();
+        private bool isCnblogsLoginSuccess = false;
+
+
         public MainWindow()
         {
             InitializeComponent();
+
+            cefSharpWindow.Show();
+            cefSharpWindow.Visibility = Visibility.Hidden;
+        }
+
+        private void btn_LoginCnblogs_Click(object sender, RoutedEventArgs e)
+        {
+            if (isCnblogsLoginSuccess == true)
+                return;
+
+            cefSharpWindow.Owner = this;
+            cefSharpWindow.Visibility = Visibility.Visible;
+            cefSharpWindow.OnLoginSuccessAction = OnCnblogsLoginSuccess;
+            cefSharpWindow.Open(Urls.CnBlogsLoginUrl);
+        }
+
+        private void OnCnblogsLoginSuccess(string html)
+        {
+            HtmlParser htmlParser = new HtmlParser(html);
+
+            if(htmlParser.Title.Contains("开发者的网上家园"))
+            {
+                this.lbl_CnblogsStatus.Content = "登录成功";
+                this.lbl_CnblogsStatus.Foreground = Brushes.Green;
+                isCnblogsLoginSuccess = true;
+            }
         }
     }
 }

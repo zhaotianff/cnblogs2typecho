@@ -30,16 +30,9 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="3*"/>
-                    </Grid.ColumnDefinitions>
+                    <Label Name="lbl_CnblogsStatus" Content="未登录" Foreground="Silver" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
 
-                    <Label Content="手机号" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
-                    <TextBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1"/>
-
-                    <Label Content="验证码" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"></Label>
-                    <TextBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1" Grid.Row="1"/>
+                    <Button Content="登录博客园" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="88" Height="28" Click="btn_LoginCnblogs_Click"></Button>
                 </Grid>
             </GroupBox>
 
