@@ -1,4 +1,5 @@
 ﻿using cnblogs2typecho.Web;
+using LungWorkStation.DAL.DbHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,36 @@ namespace cnblogs2typecho
                 this.lbl_CnblogsStatus.Content = "登录成功";
                 this.lbl_CnblogsStatus.Foreground = Brushes.Green;
                 isCnblogsLoginSuccess = true;
+            }
+        }
+
+        private void btn_Login_Click(object sender, RoutedEventArgs e)
+        {
+            if(OpenTypechoDatabase() ==true)
+            {
+                MessageBox.Show("登录");
+            }
+        }
+
+        private bool OpenTypechoDatabase()
+        {
+            try
+            {
+                var connectString = $"Server={this.tbox_Server.Text}; Port={this.tbox_Port.Text}; Database={this.tbox_Database.Text}; Uid={this.tbox_User.Text}; Pwd={this.pbx_Password.Password}";
+
+                using(MariaDbHelper mariaDbHelper = new MariaDbHelper(connectString))
+                {
+                    mariaDbHelper.Open();
+
+                    if (mariaDbHelper.ConnectionState == System.Data.ConnectionState.Open)
+                        return true;
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
             }
         }
     }

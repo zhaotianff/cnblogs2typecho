@@ -52,19 +52,19 @@
                     </Grid.ColumnDefinitions>
 
                     <Label Content="主机名" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center"></Label>
-                    <TextBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1"/>
+                    <TextBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1" Name="tbox_Server"/>
 
                     <Label Content="用户" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"></Label>
-                    <TextBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1" Grid.Row="1"/>
+                    <TextBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1" Grid.Row="1" Name="tbox_User"/>
 
                     <Label Content="密码" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="2"></Label>
-                    <TextBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1" Grid.Row="2"/>
+                    <PasswordBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1" Grid.Row="2" Name="pbx_Password"/>
 
                     <Label Content="端口" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="3"></Label>
-                    <TextBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1" Grid.Row="3"/>
+                    <TextBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1" Grid.Row="3" Name="tbox_Port"/>
 
                     <Label Content="数据库" FontSize="13" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="4"></Label>
-                    <TextBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1" Grid.Row="4"/>
+                    <TextBox VerticalAlignment="Center" Height="30" Margin="20,0" Grid.Column="1" Grid.Row="4" Name="tbox_Database"/>
                 </Grid>
             </GroupBox>
 
@@ -72,7 +72,7 @@
         </Grid>
 
         <Grid Grid.Row="1">
-            <Button Content="登录" Width="128" Height="38" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15"></Button>
+            <Button Content="登录" Width="128" Height="38" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" Name="btn_Login" Click="btn_Login_Click"></Button>
         </Grid>
     </Grid>
 </tianxia:BlurWindow>
