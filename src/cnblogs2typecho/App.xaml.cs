@@ -1,4 +1,5 @@
-﻿using System;
+﻿using cnblogs2typecho.Browser;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,11 @@ namespace cnblogs2typecho
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+
+            CefManager.Instance.Close();
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿using cnblogs2typecho.Web;
+﻿using cnblogs2typecho.Browser;
+using cnblogs2typecho.Model;
+using cnblogs2typecho.Web;
 using LungWorkStation.DAL.DbHelper;
 using System;
 using System.Collections.Generic;
@@ -21,17 +23,12 @@ namespace cnblogs2typecho
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
     public partial class MainWindow : TianXiaTech.BlurWindow
-    {
-        private CefSharpWindow cefSharpWindow = new CefSharpWindow();
+    {     
         private bool isCnblogsLoginSuccess = false;
-
 
         public MainWindow()
         {
             InitializeComponent();
-
-            cefSharpWindow.Show();
-            cefSharpWindow.Visibility = Visibility.Hidden;
         }
 
         private void btn_LoginCnblogs_Click(object sender, RoutedEventArgs e)
@@ -39,10 +36,9 @@ namespace cnblogs2typecho
             if (isCnblogsLoginSuccess == true)
                 return;
 
-            cefSharpWindow.Owner = this;
-            cefSharpWindow.Visibility = Visibility.Visible;
-            cefSharpWindow.OnLoginSuccessAction = OnCnblogsLoginSuccess;
-            cefSharpWindow.Open(Urls.CnBlogsLoginUrl);
+            CefManager.Instance.Show();
+            CefManager.Instance.SetManualClosingHanlder(OnCnblogsLoginSuccess);
+            CefManager.Instance.Open(Urls.CnBlogsLoginUrl);
         }
 
         private void OnCnblogsLoginSuccess(string html)
@@ -57,13 +53,71 @@ namespace cnblogs2typecho
             }
         }
 
-        private void btn_Login_Click(object sender, RoutedEventArgs e)
+        private async void btn_Login_Click(object sender, RoutedEventArgs e)
         {
-            if(OpenTypechoDatabase() ==true)
+            if(isCnblogsLoginSuccess == false)
             {
-                MessageBox.Show("登录");
+                MessageBox.Show("请先登录博客园");
+                return;
             }
+
+            //if(OpenTypechoDatabase() == false)
+            //{
+            //    MessageBox.Show("登录typecho数据库失败");
+            //    return;
+            //}
+
+            List<BlogPage> blogPages = await EnumAllBlogPage();
+
+            MigrationWindow migrationWindow = new MigrationWindow(blogPages);
+            migrationWindow.Show();
+
+            this.Close();
         }
+
+        private async Task<List<BlogPage>> EnumAllBlogPage()
+        {
+            CefManager.Instance.Show();
+
+            List<BlogPage> blogPages = new List<BlogPage>();
+
+            var userName = await GetUserName();
+
+            var firstPageHtml = await CefManager.Instance.OpenWithWait(string.Format(Urls.CnBLogsPageUrl, userName, "1"));
+
+            var totalPage = GetTotalPage(firstPageHtml);
+            var firstPage = GetPageBlog(firstPageHtml);
+            blogPages.Add(firstPage);
+
+            for (int i = 2; i <= totalPage; i++)
+            {
+                var pageHtml = await CefManager.Instance.OpenWithWait(string.Format(Urls.CnBLogsPageUrl, userName, i.ToString()));
+                blogPages.Add(GetPageBlog(pageHtml));
+            }
+
+            return blogPages;
+        }
+
+        private BlogPage GetPageBlog(string html)
+        {
+            return new BlogPage();
+        }
+
+        private int GetTotalPage(string firstPageHtml)
+        {
+            HtmlParser htmlParser = new HtmlParser(firstPageHtml);
+            var pageElement = htmlParser.XpathQuery("//div[@class='pager']");
+            var pageStr = pageElement.ElementAt(pageElement.Count - 2);
+            return Convert.ToInt32(pageStr.InnerText);
+        }
+
+        private async Task<string> GetUserName()
+        {
+            var html = await CefManager.Instance.OpenWithWait(Urls.CnBlogsHomeUrl);
+            HtmlParser htmlParser = new HtmlParser(html);
+            return htmlParser.XPathAttributeText("//div[@id='relation']", "data-alias");
+        }
+
 
         private bool OpenTypechoDatabase()
         {

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:cnblogs2typecho"
         xmlns:tianxia="clr-namespace:TianXiaTech;assembly=BlurWindow"
         mc:Ignorable="d"
-        Title="MigrationWindow" Height="700" Width="1400" WindowStartupLocation="CenterScreen">
+        Title="博客迁移" Height="700" Width="1400" WindowStartupLocation="CenterScreen">
     <tianxia:BlurWindow.Background>
         <SolidColorBrush Color="White" Opacity=".8"></SolidColorBrush>
     </tianxia:BlurWindow.Background>

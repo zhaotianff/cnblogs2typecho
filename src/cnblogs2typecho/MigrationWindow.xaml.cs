@@ -1,4 +1,5 @@
-﻿using System;
+﻿using cnblogs2typecho.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,7 @@ namespace cnblogs2typecho
     /// </summary>
     public partial class MigrationWindow : TianXiaTech.BlurWindow
     {
-        public MigrationWindow()
+        public MigrationWindow(List<BlogPage> blogPages)
         {
             InitializeComponent();
         }

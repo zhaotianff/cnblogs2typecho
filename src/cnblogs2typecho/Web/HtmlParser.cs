@@ -26,5 +26,25 @@ namespace cnblogs2typecho.Web
                 return doc.DocumentNode.SelectSingleNode("//title").InnerText;
             }
         }
+
+        public string GetFirstTagElementText(string tagName)
+        {
+            return doc.DocumentNode.SelectSingleNode($"//{tagName}").InnerText;
+        }
+
+        public string XPathText(string xpath)
+        {
+            return doc.DocumentNode.SelectSingleNode(xpath).InnerText;
+        }
+
+        public string XPathAttributeText(string xpath,string attribute)
+        {
+            return doc.DocumentNode.SelectSingleNode(xpath).Attributes[attribute].Value;
+        }
+
+        public HtmlNodeCollection XpathQuery(string xpath)
+        {
+            return doc.DocumentNode.SelectNodes(xpath);
+        }
     }
 }

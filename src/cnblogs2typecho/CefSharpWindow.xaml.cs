@@ -20,9 +20,11 @@ namespace cnblogs2typecho
     /// </summary>
     public partial class CefSharpWindow : TianXiaTech.BlurWindow
     {
-        public Action<string> OnLoginSuccessAction { get; set; }
+        public Action<string> OnManualClosingHandler { get; set; }
 
         public string HtmlSource { get; private set; }
+
+        public Action OnLoadedCallback { get; set; }
 
         public CefSharpWindow()
         {
@@ -39,11 +41,14 @@ namespace cnblogs2typecho
         {
             var html = await e.Browser.GetSourceAsync();
             HtmlSource = html;
+            OnLoadedCallback?.Invoke();
         }
 
         private void BlurWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            OnLoginSuccessAction?.Invoke(HtmlSource);
+            OnManualClosingHandler?.Invoke(HtmlSource);
+            e.Cancel = true;
+            this.Visibility = Visibility.Hidden;
         }
     }
 }
