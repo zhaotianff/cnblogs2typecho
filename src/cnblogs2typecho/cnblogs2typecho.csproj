@@ -161,12 +161,18 @@
     <Compile Include="CefSharpWindow.xaml.cs">
       <DependentUpon>CefSharpWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Crawler\CnBlogCrawler.cs" />
+    <Compile Include="DAL\TypechoDal.cs" />
     <Compile Include="DbHelper\IDbHelper.cs" />
     <Compile Include="DbHelper\MariaDbHelper.cs" />
     <Compile Include="MigrationWindow.xaml.cs">
       <DependentUpon>MigrationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\BlogPage.cs" />
+    <Compile Include="Model\Tyepchometas.cs" />
+    <Compile Include="ProgressWindow.xaml.cs">
+      <DependentUpon>ProgressWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Web\HtmlParser.cs" />
     <Compile Include="Web\Urls.cs" />
     <Page Include="CefSharpWindow.xaml">
@@ -186,6 +192,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="MigrationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

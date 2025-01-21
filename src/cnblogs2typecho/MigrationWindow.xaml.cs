@@ -1,4 +1,6 @@
-﻿using cnblogs2typecho.Model;
+﻿using CefSharp;
+using cnblogs2typecho.Browser;
+using cnblogs2typecho.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +25,64 @@ namespace cnblogs2typecho
         public MigrationWindow(List<BlogPage> blogPages)
         {
             InitializeComponent();
+
+            cbox_Blogs.ItemsSource = blogPages;
+            cbox_Blogs.SelectedIndex = 0;
+        }
+
+        private void list_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (this.list.SelectedItem == null)
+                return;
+
+            var blog = this.list.SelectedItem as Blog;
+
+            this.tbox_Catetory.Text = blog.Category;
+            this.tbox_Slug.Text = blog.Slug;
+
+            var tags = "";
+            foreach (var tag in blog.Tags)
+            {
+                tags += tag + ";";
+            }
+            this.tbox_Tags.Text = tags;
+            this.tbox_Title.Text = blog.Title;
+            this.dpk_CreateDate.SelectedDate = blog.CreateDate;
+            this.dpk_ModifyDate.SelectedDate = blog.ModifyDate;
+
+            try
+            {
+                this.browser.LoadHtml(AppendHtmlHead(blog.Content));
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private string AppendHtmlHead(string html)
+        {
+            var body = $@"<!DOCTYPE html>
+<html lang=""zh-CN"">
+<head>
+    <meta charset=""UTF-8"">
+</head>
+<body>
+{html}
+</body>
+</html>
+";
+            return body;
+        }
+
+        private void btn_Sync_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BlurWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            CefManager.Instance.Close();
         }
     }
 }

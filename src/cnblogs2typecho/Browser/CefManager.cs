@@ -1,4 +1,5 @@
-﻿using cnblogs2typecho.Web;
+﻿using CefSharp;
+using cnblogs2typecho.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,11 +64,14 @@ namespace cnblogs2typecho.Browser
 
         public void Close()
         {
+            cefSharpWindow.CancelExitFlag = false;
             cefSharpWindow.Close();
         }
 
         public async Task<string> OpenWithWait(string url, int timeout = 10000)
         {
+            chromeAutoResetEvent.Reset();
+
             var source = "";
             this.cefSharpWindow.OnLoadedCallback = ChromiumWebBrowserLoadEnd;
             Open(url);
@@ -97,6 +101,12 @@ namespace cnblogs2typecho.Browser
             {
                 return source;
             }
+        }
+
+        public async Task<string> ExecuteJavascript(string js)
+        {
+            this.cefSharpWindow.browser.ExecuteScriptAsync(js);
+            return await this.cefSharpWindow.browser.GetSourceAsync();
         }
 
         private void ChromiumWebBrowserLoadEnd()

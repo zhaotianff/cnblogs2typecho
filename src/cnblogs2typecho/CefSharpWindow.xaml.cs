@@ -26,6 +26,8 @@ namespace cnblogs2typecho
 
         public Action OnLoadedCallback { get; set; }
 
+        public bool CancelExitFlag { get; set; } = true;
+
         public CefSharpWindow()
         {
             InitializeComponent();
@@ -47,7 +49,7 @@ namespace cnblogs2typecho
         private void BlurWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             OnManualClosingHandler?.Invoke(HtmlSource);
-            e.Cancel = true;
+            e.Cancel = CancelExitFlag;
             this.Visibility = Visibility.Hidden;
         }
     }

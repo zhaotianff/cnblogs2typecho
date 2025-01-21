@@ -46,5 +46,73 @@ namespace cnblogs2typecho.Web
         {
             return doc.DocumentNode.SelectNodes(xpath);
         }
+
+        public string CnBlogTitle
+        {
+            get => doc.DocumentNode.SelectSingleNode("//h1[@class='postTitle']").InnerText.Trim();
+        }
+
+        public string CnBlogCategory
+        {
+            get
+            {
+                var categoryElement = doc.DocumentNode.SelectSingleNode("//div[@id='BlogPostCategory']/a");
+
+                if (categoryElement != null)
+                    return categoryElement.InnerText.Trim();
+
+                return "未分类";
+            }
+        }
+         
+        public string CnBlogContent 
+        { 
+            get => doc.DocumentNode.SelectSingleNode("//div[@id='cnblogs_post_body']").InnerHtml.Trim(); 
+        }
+
+        public DateTime CnBlogCreateDate 
+        { 
+            get
+            {
+                var dateSpan = doc.DocumentNode.SelectSingleNode("//span[@id='post-date']");
+
+                DateTime createDate = DateTime.Now;
+                DateTime updateDate = DateTime.Now;
+
+                DateTime.TryParse(dateSpan.InnerText, out createDate);
+                DateTime.TryParse(dateSpan.Attributes["data-date-updated"].Value, out updateDate);
+
+                CnBlogModifyDate = updateDate;
+
+                return createDate;
+            }
+        }
+
+        public DateTime CnBlogModifyDate 
+        {
+            get;
+            private set;
+        }
+
+        public string[] CnBlogTags 
+        { 
+            get
+            {
+                var metaElementList = doc.DocumentNode.Element("html").Element("head").Elements("meta");
+
+                if (metaElementList == null)
+                    return new string[] { "未分类" };
+
+                foreach (var metaElement in metaElementList)
+                {
+                    if (metaElement.Attributes["name"] != null && metaElement.Attributes["name"].Value == "keywords")
+                    {
+                        return metaElement.Attributes["content"].Value.Split(',');
+                    }
+                }
+
+                return new string[] { };
+            }
+        }
     }
 }

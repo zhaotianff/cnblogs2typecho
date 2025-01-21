@@ -1,4 +1,6 @@
 ﻿using cnblogs2typecho.Browser;
+using cnblogs2typecho.Crawler;
+using cnblogs2typecho.DAL;
 using cnblogs2typecho.Model;
 using cnblogs2typecho.Web;
 using LungWorkStation.DAL.DbHelper;
@@ -25,6 +27,8 @@ namespace cnblogs2typecho
     public partial class MainWindow : TianXiaTech.BlurWindow
     {     
         private bool isCnblogsLoginSuccess = false;
+        private CnBlogCrawler blogCrawler = new CnBlogCrawler();
+        private TypechoDal typechoDal = new TypechoDal();
 
         public MainWindow()
         {
@@ -61,84 +65,23 @@ namespace cnblogs2typecho
                 return;
             }
 
-            //if(OpenTypechoDatabase() == false)
-            //{
-            //    MessageBox.Show("登录typecho数据库失败");
-            //    return;
-            //}
+            if (typechoDal.OpenTypechoDatabase(this.tbox_Server.Text,this.tbox_Port.Text,
+                this.tbox_Database.Text,this.tbox_User.Text,
+                this.pbx_Password.Password) == false)
+            {
+                MessageBox.Show("登录typecho数据库失败");
+                return;
+            }
 
-            List<BlogPage> blogPages = await EnumAllBlogPage();
+            ProgressWindow progressWindow = new ProgressWindow();
+            progressWindow.Show();
+
+            List<BlogPage> blogPages = await blogCrawler.EnumAllBlogPage(progressWindow.UpdateProgress);
 
             MigrationWindow migrationWindow = new MigrationWindow(blogPages);
             migrationWindow.Show();
-
+            Application.Current.MainWindow = migrationWindow;
             this.Close();
-        }
-
-        private async Task<List<BlogPage>> EnumAllBlogPage()
-        {
-            CefManager.Instance.Show();
-
-            List<BlogPage> blogPages = new List<BlogPage>();
-
-            var userName = await GetUserName();
-
-            var firstPageHtml = await CefManager.Instance.OpenWithWait(string.Format(Urls.CnBLogsPageUrl, userName, "1"));
-
-            var totalPage = GetTotalPage(firstPageHtml);
-            var firstPage = GetPageBlog(firstPageHtml);
-            blogPages.Add(firstPage);
-
-            for (int i = 2; i <= totalPage; i++)
-            {
-                var pageHtml = await CefManager.Instance.OpenWithWait(string.Format(Urls.CnBLogsPageUrl, userName, i.ToString()));
-                blogPages.Add(GetPageBlog(pageHtml));
-            }
-
-            return blogPages;
-        }
-
-        private BlogPage GetPageBlog(string html)
-        {
-            return new BlogPage();
-        }
-
-        private int GetTotalPage(string firstPageHtml)
-        {
-            HtmlParser htmlParser = new HtmlParser(firstPageHtml);
-            var pageElement = htmlParser.XpathQuery("//div[@class='pager']");
-            var pageStr = pageElement.ElementAt(pageElement.Count - 2);
-            return Convert.ToInt32(pageStr.InnerText);
-        }
-
-        private async Task<string> GetUserName()
-        {
-            var html = await CefManager.Instance.OpenWithWait(Urls.CnBlogsHomeUrl);
-            HtmlParser htmlParser = new HtmlParser(html);
-            return htmlParser.XPathAttributeText("//div[@id='relation']", "data-alias");
-        }
-
-
-        private bool OpenTypechoDatabase()
-        {
-            try
-            {
-                var connectString = $"Server={this.tbox_Server.Text}; Port={this.tbox_Port.Text}; Database={this.tbox_Database.Text}; Uid={this.tbox_User.Text}; Pwd={this.pbx_Password.Password}";
-
-                using(MariaDbHelper mariaDbHelper = new MariaDbHelper(connectString))
-                {
-                    mariaDbHelper.Open();
-
-                    if (mariaDbHelper.ConnectionState == System.Data.ConnectionState.Open)
-                        return true;
-                }
-
-                return false;
-            }
-            catch
-            {
-                return false;
-            }
         }
     }
 }
