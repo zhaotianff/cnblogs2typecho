@@ -1,9 +1,11 @@
-﻿using LungWorkStation.DAL.DbHelper;
+﻿using cnblogs2typecho.DbHelper;
+using cnblogs2typecho.Extension;
+using cnblogs2typecho.Model;
+using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace cnblogs2typecho.DAL
 {
@@ -33,6 +35,165 @@ namespace cnblogs2typecho.DAL
             }
         }
 
+        public List<Typechometa> GetTypechometa()
+        {
+            var sql = "Select * from typecho_metas";
+            var dt = mariaDbHelper.Query(sql);
+            return dt.ToList<Typechometa>();
+        }
 
+        public void Close()
+        {
+            mariaDbHelper.Close();
+        }
+
+        public bool AddBlog(Blog blog)
+        {
+            var sql = @"INSERT INTO typecho_contents (title, slug, created, modified, " +
+                "`text`,`order`, authorId, template, " +
+                "`type`, `status`, `password`, commentsNum, " +
+                "allowComment, allowPing, allowFeed, " +
+                "parent,views, agree, likes) VALUES (@title, @slug, @created, @modified, " +
+                "@text,@order, @authorId, @template, " +
+                "@type,@status, @password, @commentsNum, " +
+                "@allowComment, @allowPing, @allowFeed, " +
+                "@parent, @views, @agree, @likes)";
+
+            MySqlParameter[] parameters = new MySqlParameter[] 
+            {
+                new MySqlParameter("@title", blog.Title),
+                new MySqlParameter("@slug", blog.Slug),
+                new MySqlParameter("@created", (long)(blog.CreateDate.ToUniversalTime().Subtract(new DateTime(1970, 1, 1))).TotalSeconds), 
+                new MySqlParameter("@modified",(long)(blog.ModifyDate.ToUniversalTime().Subtract(new DateTime(1970, 1, 1))).TotalSeconds),
+                new MySqlParameter("@text", "<!--markdown-->" + blog.Content),
+                new MySqlParameter("@order", MySqlDbType.Int32,0), 
+                new MySqlParameter("@authorId", MySqlDbType.Int32,1), 
+                new MySqlParameter("@template", null),
+                new MySqlParameter("@type", "post"),
+                new MySqlParameter("@status", "publish"),
+                new MySqlParameter("@password", null),
+                new MySqlParameter("@commentsNum", MySqlDbType.Int32,0), 
+                new MySqlParameter("@allowComment", '1'), 
+                new MySqlParameter("@allowPing", '1'), 
+                new MySqlParameter("@allowFeed", '1'), 
+                new MySqlParameter("@parent", 0), 
+                new MySqlParameter("@views",MySqlDbType.Int32, 0), 
+                new MySqlParameter("@agree",MySqlDbType.Int32, 0), 
+                new MySqlParameter("@likes",MySqlDbType.Int32, 0)  
+            };
+
+            var result = mariaDbHelper.ExecuteSql(sql, parameters);
+
+            if (result <= 0)
+                return false;
+            
+            sql = "Select cid from typecho_contents order by cid desc";
+
+            var cidObj = mariaDbHelper.QueryFirst(sql);
+
+            if(cidObj == DBNull.Value)
+            {
+                return false;
+            }
+
+            return CreateCatetoryAndTag(cidObj.ToString(), blog);
+        }
+
+        private bool CreateCatetoryAndTag(string cid,Blog blog)
+        {
+            ReplaceTagsWithmid(blog);
+            ReplaceCatetoryWithmid(blog);
+
+            var sql = "Insert Into typecho_relationships (cid,mid) Values (@cid,@mid)";
+            var insertTagResult = 0;
+            var insertCatetoryResult = 0;
+
+            foreach (var tag in blog.Tags)
+            {
+               
+
+                MySqlParameter[] parameters = new MySqlParameter[] 
+                {
+                    new MySqlParameter("@cid",cid),
+                    new MySqlParameter("@mid",tag)
+                };
+
+                insertTagResult = mariaDbHelper.ExecuteSql(sql, parameters);
+            }
+
+            MySqlParameter[] catetoryParameters = new MySqlParameter[]
+            {
+                new MySqlParameter("@cid",cid),
+                new MySqlParameter("@mid",blog.Category)
+            };
+
+            insertCatetoryResult = mariaDbHelper.ExecuteSql(sql, catetoryParameters);
+
+            return insertTagResult > 0 & insertCatetoryResult > 0;
+        }
+
+        private void ReplaceTagsWithmid(Blog blog)
+        {
+            var metas = GetTypechometa();
+            var tagList = metas.Where(x => x.type == "tag");
+
+            for(int i = 0;i<blog.Tags.Count();i++)
+            {
+                var findTagResult = tagList.FirstOrDefault(x => x.name == blog.Tags[i]);
+                if (findTagResult != null)
+                {
+                    blog.Tags[i] = findTagResult.mid.ToString();
+                }
+                else
+                {
+                    blog.Tags[i] = InsertMeta(blog.Tags[i], blog.Tags[i], "tag");
+                }
+            }
+        }
+
+        private void ReplaceCatetoryWithmid(Blog blog)
+        {
+            var metas = GetTypechometa();
+            var catetoryList = metas.Where(x => x.type == "category");
+
+            var findCatetoryResult = catetoryList.FirstOrDefault(x => x.name == blog.Category);
+
+            if(findCatetoryResult != null)
+            {
+                blog.Category = findCatetoryResult.mid.ToString();
+            }
+            else
+            {
+                blog.Category = InsertMeta(blog.Category, blog.Category, "category");
+            }
+        }
+
+        private string InsertMeta(string name,string slug,string type)
+        {
+            var sql = "INSERT INTO typecho_metas " +
+                        "(name, slug, `type`, description, count, `order`, parent) VALUES " +
+                        "(@name,@slug,@type,@description,@count,@order,@parent)";
+
+            MySqlParameter[] parameters = new MySqlParameter[]
+            {
+                        new MySqlParameter("@name",name),
+                        new MySqlParameter("@slug",slug),
+                        new MySqlParameter("@type",type),
+                        new MySqlParameter("@description",null),
+                        new MySqlParameter("@count",1),
+                        new MySqlParameter("@order",0),
+                        new MySqlParameter("@parent",0)
+            };
+
+            var result = mariaDbHelper.ExecuteSql(sql, parameters);
+
+            if(result>0)
+            {
+                sql = "select mid from typecho_metas order by mid desc";
+                return mariaDbHelper.QueryFirst(sql).ToString();
+            }
+
+            return "";
+        }
     }
 }

@@ -165,11 +165,13 @@
     <Compile Include="DAL\TypechoDal.cs" />
     <Compile Include="DbHelper\IDbHelper.cs" />
     <Compile Include="DbHelper\MariaDbHelper.cs" />
+    <Compile Include="Extension\DataTableExtension.cs" />
     <Compile Include="MigrationWindow.xaml.cs">
       <DependentUpon>MigrationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\BlogPage.cs" />
     <Compile Include="Model\Tyepchometas.cs" />
+    <Compile Include="Model\TypechoContents.cs" />
     <Compile Include="ProgressWindow.xaml.cs">
       <DependentUpon>ProgressWindow.xaml</DependentUpon>
     </Compile>

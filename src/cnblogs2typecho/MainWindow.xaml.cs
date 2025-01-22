@@ -65,8 +65,8 @@ namespace cnblogs2typecho
                 return;
             }
 
-            if (typechoDal.OpenTypechoDatabase(this.tbox_Server.Text,this.tbox_Port.Text,
-                this.tbox_Database.Text,this.tbox_User.Text,
+            if (typechoDal.OpenTypechoDatabase(this.tbox_Server.Text, this.tbox_Port.Text,
+                this.tbox_Database.Text, this.tbox_User.Text,
                 this.pbx_Password.Password) == false)
             {
                 MessageBox.Show("登录typecho数据库失败");
@@ -78,10 +78,15 @@ namespace cnblogs2typecho
 
             List<BlogPage> blogPages = await blogCrawler.EnumAllBlogPage(progressWindow.UpdateProgress);
 
-            MigrationWindow migrationWindow = new MigrationWindow(blogPages);
+            MigrationWindow migrationWindow = new MigrationWindow(blogPages,this.typechoDal);
             migrationWindow.Show();
             Application.Current.MainWindow = migrationWindow;
             this.Close();
+        }
+
+        private void BlurWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            CefManager.Instance.Close();
         }
     }
 }

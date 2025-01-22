@@ -67,7 +67,7 @@
                     <TextBox Margin="10,0" Name="tbox_Tags"></TextBox>
 
                     <Grid Margin="0,60,0,0">
-                        <Button Content="保存" Width="88" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center"></Button>
+                        <Button Content="保存" Width="88" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center" Name="btn_SaveBlogSetting" Click="btn_SaveBlogSetting_Click"></Button>
                     </Grid>
                 </StackPanel>
             </GroupBox>
@@ -81,7 +81,17 @@
 
             <ProgressBar VerticalAlignment="Center" HorizontalAlignment="Center" Width="600" Height="15"></ProgressBar>
 
-            <Button Content="同步" FontSize="25" Width="158" Height="45" Grid.Row="1" Name="btn_Sync" Click="btn_Sync_Click"></Button>
+            <Grid Grid.Row="1" Width="300">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Button Content="同步选中项" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncSelected" Click="btn_SyncSelected_Click"></Button>
+                <Button Content="同步当前页" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncCurrentPage" Click="btn_SyncCurrentPage_Click" Grid.Column="1"></Button>
+                <Button Content="同步全部页" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncAllPage" Click="btn_SyncAllPage_Click" Grid.Column="2"></Button>
+            </Grid>
         </Grid>
     </Grid>
 </tianxia:BlurWindow>

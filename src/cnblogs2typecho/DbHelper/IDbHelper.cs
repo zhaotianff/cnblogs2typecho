@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
-using System.Text;
 
-namespace LungWorkStation.DAL.DbHelper
+namespace cnblogs2typecho.DbHelper
 {
     public interface IDbHelper
     {

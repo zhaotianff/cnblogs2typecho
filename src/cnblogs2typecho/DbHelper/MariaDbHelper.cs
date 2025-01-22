@@ -1,12 +1,9 @@
 ﻿using MySql.Data.MySqlClient;
-using MySqlX.XDevAPI.Common;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Text;
 
-namespace LungWorkStation.DAL.DbHelper
+namespace cnblogs2typecho.DbHelper
 {
     public class MariaDbHelper : IDbHelper,IDisposable
     {

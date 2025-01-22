@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace cnblogs2typecho.Model
 {
-    public class Tyepchometa
+    public class Typechometa
     {
         public int mid { get; set; }
 

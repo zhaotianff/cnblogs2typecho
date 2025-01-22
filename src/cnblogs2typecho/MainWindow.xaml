@@ -6,7 +6,8 @@
         xmlns:tianxia="clr-namespace:TianXiaTech;assembly=BlurWindow"
         xmlns:local="clr-namespace:cnblogs2typecho"
         mc:Ignorable="d"
-        Title="博客园 Typecho同步工具" Height="650" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="Resources/favicon_v3_2.ico" MaximizeVisibility="Collapsed" MinimizeVisibility="Collapsed">
+        Title="博客园 Typecho同步工具" Height="650" Width="800" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="Resources/favicon_v3_2.ico" MaximizeVisibility="Collapsed" MinimizeVisibility="Collapsed"
+                    Closing="BlurWindow_Closing">
     <tianxia:BlurWindow.Background>
         <SolidColorBrush Color="White" Opacity=".9"></SolidColorBrush>
     </tianxia:BlurWindow.Background>
