@@ -59,27 +59,27 @@ namespace cnblogs2typecho.DAL
                 "@allowComment, @allowPing, @allowFeed, " +
                 "@parent, @views, @agree, @likes)";
 
-            MySqlParameter[] parameters = new MySqlParameter[] 
+            MySqlParameter[] parameters = new MySqlParameter[]
             {
                 new MySqlParameter("@title", blog.Title),
                 new MySqlParameter("@slug", blog.Slug),
-                new MySqlParameter("@created", (long)(blog.CreateDate.ToUniversalTime().Subtract(new DateTime(1970, 1, 1))).TotalSeconds), 
+                new MySqlParameter("@created", (long)(blog.CreateDate.ToUniversalTime().Subtract(new DateTime(1970, 1, 1))).TotalSeconds),
                 new MySqlParameter("@modified",(long)(blog.ModifyDate.ToUniversalTime().Subtract(new DateTime(1970, 1, 1))).TotalSeconds),
                 new MySqlParameter("@text", "<!--markdown-->" + blog.Content),
-                new MySqlParameter("@order", MySqlDbType.Int32,0), 
-                new MySqlParameter("@authorId", MySqlDbType.Int32,1), 
+                new MySqlParameter("@order", MySqlDbType.Int32){ Value = 0},
+                new MySqlParameter("@authorId", MySqlDbType.Int32){ Value = 1},
                 new MySqlParameter("@template", null),
                 new MySqlParameter("@type", "post"),
                 new MySqlParameter("@status", "publish"),
                 new MySqlParameter("@password", null),
-                new MySqlParameter("@commentsNum", MySqlDbType.Int32,0), 
-                new MySqlParameter("@allowComment", '1'), 
-                new MySqlParameter("@allowPing", '1'), 
-                new MySqlParameter("@allowFeed", '1'), 
-                new MySqlParameter("@parent", 0), 
-                new MySqlParameter("@views",MySqlDbType.Int32, 0), 
-                new MySqlParameter("@agree",MySqlDbType.Int32, 0), 
-                new MySqlParameter("@likes",MySqlDbType.Int32, 0)  
+                new MySqlParameter("@commentsNum", MySqlDbType.Int32){ Value = 0 },
+                new MySqlParameter("@allowComment", '1'),
+                new MySqlParameter("@allowPing", '1'),
+                new MySqlParameter("@allowFeed", '1'),
+                new MySqlParameter("@parent", 0),
+                new MySqlParameter("@views",MySqlDbType.Int32){ Value = 0},
+                new MySqlParameter("@agree",MySqlDbType.Int32 ){ Value =0},
+                new MySqlParameter("@likes",MySqlDbType.Int32){ Value = 0}
             };
 
             var result = mariaDbHelper.ExecuteSql(sql, parameters);
@@ -180,9 +180,9 @@ namespace cnblogs2typecho.DAL
                         new MySqlParameter("@slug",slug),
                         new MySqlParameter("@type",type),
                         new MySqlParameter("@description",null),
-                        new MySqlParameter("@count",1),
-                        new MySqlParameter("@order",0),
-                        new MySqlParameter("@parent",0)
+                        new MySqlParameter("@count",MySqlDbType.Int32){ Value = 1},
+                        new MySqlParameter("@order",MySqlDbType.Int32){ Value = 0},
+                        new MySqlParameter("@parent",MySqlDbType.Int32){ Value = 0}
             };
 
             var result = mariaDbHelper.ExecuteSql(sql, parameters);
