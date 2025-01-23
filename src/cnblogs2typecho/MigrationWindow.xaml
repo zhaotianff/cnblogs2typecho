@@ -79,7 +79,7 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <ProgressBar VerticalAlignment="Center" HorizontalAlignment="Center" Width="600" Height="15"></ProgressBar>
+            <ProgressBar VerticalAlignment="Center" HorizontalAlignment="Center" Minimum="0" Maximum="100" Width="600" Height="15" Name="progress"></ProgressBar>
 
             <Grid Grid.Row="1" Width="300">
                 <Grid.ColumnDefinitions>

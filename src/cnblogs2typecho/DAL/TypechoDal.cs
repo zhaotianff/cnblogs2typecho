@@ -143,12 +143,19 @@ namespace cnblogs2typecho.DAL
                 if (findTagResult != null)
                 {
                     blog.Tags[i] = findTagResult.mid.ToString();
+                    IncrementMetaCount(findTagResult.mid);
                 }
                 else
                 {
                     blog.Tags[i] = InsertMeta(blog.Tags[i], blog.Tags[i], "tag");
                 }
             }
+        }
+
+        private void IncrementMetaCount(int mid)
+        {
+            var sql = $"UPDATE typecho_metas SET `count` = `count` + 1 WHERE MID = {mid}" ;
+            mariaDbHelper.ExecuteSql(sql);
         }
 
         private void ReplaceCatetoryWithmid(Blog blog)
@@ -161,6 +168,7 @@ namespace cnblogs2typecho.DAL
             if(findCatetoryResult != null)
             {
                 blog.Category = findCatetoryResult.mid.ToString();
+                IncrementMetaCount(findCatetoryResult.mid);
             }
             else
             {

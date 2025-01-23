@@ -24,6 +24,7 @@ namespace cnblogs2typecho
     public partial class MigrationWindow : TianXiaTech.BlurWindow
     {
         private TypechoDal typechoDal;
+        private List<BlogPage> blogPages;
 
         public MigrationWindow(List<BlogPage> blogPages,TypechoDal typechoDal)
         {
@@ -33,6 +34,7 @@ namespace cnblogs2typecho
             cbox_Blogs.SelectedIndex = 0;
 
             this.typechoDal = typechoDal;
+            this.blogPages = blogPages;
         }
 
         private void list_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -91,17 +93,69 @@ namespace cnblogs2typecho
             if (this.list.SelectedItem == null)
                 return;
 
+            ResetProgress();
+
             typechoDal.AddBlog(this.list.SelectedItem as Blog);
+
+            AddProgress(100);
         }
 
-        private void btn_SyncCurrentPage_Click(object sender, RoutedEventArgs e)
+        private void ResetProgress()
         {
-
+            this.progress.Value = 0;
         }
 
-        private void btn_SyncAllPage_Click(object sender, RoutedEventArgs e)
+        private void AddProgress(double value)
         {
+            this.progress.Value += value;
+        }
 
+        private async void btn_SyncCurrentPage_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.cbox_Blogs.SelectedIndex == -1)
+                return;
+
+            ResetProgress();
+
+            var blogs = blogPages[cbox_Blogs.SelectedIndex].Blogs;
+
+            var tick = 100 / blogs.Count;
+
+            foreach (var blog in blogs)
+            {
+                await Task.Run(() =>
+                {
+                    typechoDal.AddBlog(blog);
+                });
+
+                AddProgress(tick);
+            }
+
+            AddProgress(100);
+        }
+
+        private async void btn_SyncAllPage_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.blogPages == null || this.blogPages.Count == 0)
+                return;
+
+            ResetProgress();
+
+            var tick = 100 / this.blogPages.Count;
+
+            foreach(var page in this.blogPages)
+            {
+                foreach (var blog in page.Blogs)
+                {
+                    await Task.Run(() => {
+                        typechoDal.AddBlog(blog);
+                    });
+
+                    AddProgress(tick);
+                }
+            }
+
+            AddProgress(100);
         }
 
         private void btn_SaveBlogSetting_Click(object sender, RoutedEventArgs e)

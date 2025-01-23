@@ -6,7 +6,10 @@
         xmlns:local="clr-namespace:cnblogs2typecho"
         xmlns:tianxia="clr-namespace:TianXiaTech;assembly=BlurWindow"
         mc:Ignorable="d"
-        Height="150" Width="600" WindowStartupLocation="CenterScreen" ControlBoxVisibility="Collapsed" ShowInTaskbar="False">
+        Height="150" Width="600" WindowStartupLocation="CenterScreen" ControlBoxVisibility="Collapsed" Icon="Resources/favicon_v3_2.ico" ShowInTaskbar="False" Topmost="True">
+    <tianxia:BlurWindow.Background>
+        <SolidColorBrush Color="White" Opacity=".8"></SolidColorBrush>
+    </tianxia:BlurWindow.Background>
     <Grid x:Name="Grid_Progress">
         <Grid.RowDefinitions>
             <RowDefinition/>
