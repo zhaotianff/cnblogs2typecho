@@ -11,87 +11,127 @@
     <tianxia:BlurWindow.Background>
         <SolidColorBrush Color="White" Opacity=".8"></SolidColorBrush>
     </tianxia:BlurWindow.Background>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition  Height="90"/>
-        </Grid.RowDefinitions>
+    <TabControl>
+        <TabItem Header="迁移">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition  Height="90"/>
+                </Grid.RowDefinitions>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.5*"/>
-                <ColumnDefinition Width="4*"/>
-                <ColumnDefinition Width="1.2*"/>
-            </Grid.ColumnDefinitions>
-
-            <GroupBox Header="博客列表" Margin="10">
                 <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1.5*"/>
+                        <ColumnDefinition Width="4*"/>
+                        <ColumnDefinition Width="1.2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <GroupBox Header="博客列表" Margin="10">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="35"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Grid>
+                                <Label Content="页码" HorizontalAlignment="Left" VerticalAlignment="Center"></Label>
+                                <ComboBox Margin="40,2,10,2" VerticalAlignment="Center" Name="cbox_Blogs" DisplayMemberPath="PageIndex"></ComboBox>
+                            </Grid>
+
+                            <ListBox Grid.Row="1" Margin="0,10,0,0" x:Name="list" DisplayMemberPath="Title" ItemsSource="{Binding ElementName=cbox_Blogs,Path=SelectedItem.Blogs,UpdateSourceTrigger=PropertyChanged}" SelectionChanged="list_SelectionChanged">
+
+                            </ListBox>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Header="博客预览" Margin="0,10" Grid.Column="1">
+                        <cef:ChromiumWebBrowser x:Name="browser" ScrollViewer.HorizontalScrollBarVisibility="Disabled"></cef:ChromiumWebBrowser>
+                    </GroupBox>
+
+                    <GroupBox Header="迁移设置" Grid.Column="2" Margin="10">
+                        <StackPanel>
+                            <Label Content="Slug" Margin="10"></Label>
+                            <TextBox Margin="10,0" Name="tbox_Slug"></TextBox>
+
+                            <Label Content="标题" Margin="10"></Label>
+                            <TextBox Margin="10,0" Name="tbox_Title"></TextBox>
+
+                            <Label Content="创建日期" Margin="10"></Label>
+                            <DatePicker Margin="10,0" Name="dpk_CreateDate"></DatePicker>
+
+                            <Label Content="修改日期" Margin="10"></Label>
+                            <DatePicker Margin="10,0" IsEnabled="False" Name="dpk_ModifyDate"></DatePicker>
+
+                            <Label Content="分类" Margin="10"></Label>
+                            <TextBox Margin="10,0" Name="tbox_Catetory"></TextBox>
+
+                            <Label Content="标签" Margin="10"></Label>
+                            <TextBox Margin="10,0" Name="tbox_Tags"></TextBox>
+
+                            <Grid Margin="0,60,0,0">
+                                <Button Content="保存" Width="88" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center" Name="btn_SaveBlogSetting" Click="btn_SaveBlogSetting_Click"></Button>
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
+                </Grid>
+
+                <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="35"/>
+                        <RowDefinition Height="30"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
 
-                    <Grid>
-                        <Label Content="页码" HorizontalAlignment="Left" VerticalAlignment="Center"></Label>
-                        <ComboBox Margin="40,2,10,2" VerticalAlignment="Center" Name="cbox_Blogs" DisplayMemberPath="PageIndex"></ComboBox>
+                    <ProgressBar VerticalAlignment="Center" HorizontalAlignment="Center" Minimum="0" Maximum="100" Width="600" Height="15" Name="progress"></ProgressBar>
+
+                    <Grid Grid.Row="1" Width="300">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Content="同步选中项" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncSelected" Click="btn_SyncSelected_Click"></Button>
+                        <Button Content="同步当前页" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncCurrentPage" Click="btn_SyncCurrentPage_Click" Grid.Column="1"></Button>
+                        <Button Content="同步全部页" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncAllPage" Click="btn_SyncAllPage_Click" Grid.Column="2"></Button>
                     </Grid>
-
-                    <ListBox Grid.Row="1" Margin="0,10,0,0" x:Name="list" DisplayMemberPath="Title" ItemsSource="{Binding ElementName=cbox_Blogs,Path=SelectedItem.Blogs,UpdateSourceTrigger=PropertyChanged}" SelectionChanged="list_SelectionChanged">
-
-                    </ListBox>
                 </Grid>
-            </GroupBox>
-
-            <GroupBox Header="博客预览" Margin="0,10" Grid.Column="1">
-                <cef:ChromiumWebBrowser x:Name="browser" ScrollViewer.HorizontalScrollBarVisibility="Disabled"></cef:ChromiumWebBrowser>
-            </GroupBox>
-
-            <GroupBox Header="迁移设置" Grid.Column="2" Margin="10">
-                <StackPanel>
-                    <Label Content="Slug" Margin="10"></Label>
-                    <TextBox Margin="10,0" Name="tbox_Slug"></TextBox>
-
-                    <Label Content="标题" Margin="10"></Label>
-                    <TextBox Margin="10,0" Name="tbox_Title"></TextBox>
-
-                    <Label Content="创建日期" Margin="10"></Label>
-                    <DatePicker Margin="10,0" Name="dpk_CreateDate"></DatePicker>
-
-                    <Label Content="修改日期" Margin="10"></Label>
-                    <DatePicker Margin="10,0" IsEnabled="False" Name="dpk_ModifyDate"></DatePicker>
-
-                    <Label Content="分类" Margin="10"></Label>
-                    <TextBox Margin="10,0" Name="tbox_Catetory"></TextBox>
-
-                    <Label Content="标签" Margin="10"></Label>
-                    <TextBox Margin="10,0" Name="tbox_Tags"></TextBox>
-
-                    <Grid Margin="0,60,0,0">
-                        <Button Content="保存" Width="88" Height="28" HorizontalAlignment="Center" VerticalAlignment="Center" Name="btn_SaveBlogSetting" Click="btn_SaveBlogSetting_Click"></Button>
-                    </Grid>
-                </StackPanel>
-            </GroupBox>
-        </Grid>
-
-        <Grid Grid.Row="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-
-            <ProgressBar VerticalAlignment="Center" HorizontalAlignment="Center" Minimum="0" Maximum="100" Width="600" Height="15" Name="progress"></ProgressBar>
-
-            <Grid Grid.Row="1" Width="300">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <Button Content="同步选中项" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncSelected" Click="btn_SyncSelected_Click"></Button>
-                <Button Content="同步当前页" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncCurrentPage" Click="btn_SyncCurrentPage_Click" Grid.Column="1"></Button>
-                <Button Content="同步全部页" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncAllPage" Click="btn_SyncAllPage_Click" Grid.Column="2"></Button>
             </Grid>
-        </Grid>
-    </Grid>
+        </TabItem>
+        <TabItem Header="全局设置">
+            <StackPanel>
+                <Label Content="网站根目录" Margin="10"></Label>
+                <Grid Height="40">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Margin="10,0" Name="tbox_rootDir" VerticalAlignment="Center"></TextBox>
+                    <Button Content="浏览" HorizontalAlignment="Left" Grid.Column="1" Width="88" Height="28" Name="btn_BrowseRootDir" Click="btn_BrowseRootDir_Click"></Button>
+                </Grid>
+
+                <Label Content="图片下载目录" Margin="10"></Label>
+                <Grid Height="40">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Margin="10,0" Name="tbox_imageDir" VerticalAlignment="Center"></TextBox>
+                    <Button Content="浏览" HorizontalAlignment="Left" Grid.Column="1" Width="88" Height="28" Name="btn_BrowseImageDir" Click="btn_BrowseImageDir_Click"></Button>
+                </Grid>
+
+                <Label Content="网站url" Margin="10"></Label>
+                <Grid Height="40">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Margin="10,0" Name="tbox_siteUrl" VerticalAlignment="Center"></TextBox>
+                 
+                </Grid>
+            </StackPanel>
+        </TabItem>
+    </TabControl>
 </tianxia:BlurWindow>

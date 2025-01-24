@@ -1,4 +1,5 @@
 ﻿using CefSharp;
+using cnblogdownloader;
 using cnblogs2typecho.Browser;
 using cnblogs2typecho.DAL;
 using cnblogs2typecho.Model;
@@ -88,16 +89,25 @@ namespace cnblogs2typecho
             typechoDal.Close();
         }
 
-        private void btn_SyncSelected_Click(object sender, RoutedEventArgs e)
+        private async void btn_SyncSelected_Click(object sender, RoutedEventArgs e)
         {
             if (this.list.SelectedItem == null)
                 return;
 
             ResetProgress();
 
-            typechoDal.AddBlog(this.list.SelectedItem as Blog);
+            await InsertNewBlogAsync(this.list.SelectedItem as Blog);
 
             AddProgress(100);
+        }
+
+        private async Task InsertNewBlogAsync(Blog blog)
+        {
+            ImageDownloader imageDownloader = new ImageDownloader();
+            var previousContent = blog.Content;
+            blog.Content =  await imageDownloader.DownloadCnblogImages(blog.Content, this.tbox_imageDir.Text, this.tbox_rootDir.Text, this.tbox_siteUrl.Text, blog.Title);
+            await typechoDal.AddBlogAsync(blog);
+            blog.Content = previousContent;
         }
 
         private void ResetProgress()
@@ -123,11 +133,7 @@ namespace cnblogs2typecho
 
             foreach (var blog in blogs)
             {
-                await Task.Run(() =>
-                {
-                    typechoDal.AddBlog(blog);
-                });
-
+                await InsertNewBlogAsync(blog);
                 AddProgress(tick);
             }
 
@@ -147,10 +153,7 @@ namespace cnblogs2typecho
             {
                 foreach (var blog in page.Blogs)
                 {
-                    await Task.Run(() => {
-                        typechoDal.AddBlog(blog);
-                    });
-
+                    await InsertNewBlogAsync(blog);
                     AddProgress(tick);
                 }
             }
@@ -177,6 +180,24 @@ namespace cnblogs2typecho
 
             blog.Title = this.tbox_Title.Text;
             blog.CreateDate = this.dpk_CreateDate.SelectedDate.Value;
+        }
+
+        private void btn_BrowseRootDir_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            if(folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                this.tbox_rootDir.Text = folderBrowserDialog.SelectedPath;
+            }
+        }
+
+        private void btn_BrowseImageDir_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            if (folderBrowserDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                this.tbox_imageDir.Text = folderBrowserDialog.SelectedPath;
+            }
         }
     }
 }

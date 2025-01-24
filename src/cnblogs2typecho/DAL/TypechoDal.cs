@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace cnblogs2typecho.DAL
 {
@@ -47,7 +48,7 @@ namespace cnblogs2typecho.DAL
             mariaDbHelper.Close();
         }
 
-        public bool AddBlog(Blog blog)
+        private bool AddBlog(Blog blog)
         {
             var sql = @"INSERT INTO typecho_contents (title, slug, created, modified, " +
                 "`text`,`order`, authorId, template, " +
@@ -97,6 +98,15 @@ namespace cnblogs2typecho.DAL
             }
 
             return CreateCatetoryAndTag(cidObj.ToString(), blog);
+        }
+
+        public async Task<bool> AddBlogAsync(Blog blog)
+        {
+            var result = false;
+            await Task.Run(() => {
+                result =  AddBlog(blog);
+            });
+            return result;
         }
 
         private bool CreateCatetoryAndTag(string cid,Blog blog)
