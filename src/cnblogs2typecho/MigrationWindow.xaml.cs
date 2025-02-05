@@ -151,9 +151,8 @@ namespace cnblogs2typecho
 
             var tick = 100 / this.blogPages.Count;
 
-            for (int i = 0; i < 25; i++)
+            foreach (var page in this.blogPages)
             {
-                var page = this.blogPages[i];
                 foreach (var blog in page.Blogs)
                 {
                     await InsertNewBlogAsync(blog);
