@@ -105,9 +105,11 @@ namespace cnblogs2typecho
         {
             ImageDownloader imageDownloader = new ImageDownloader();
             var previousContent = blog.Content;
+            var previousTags = blog.Tags;
             blog.Content =  await imageDownloader.DownloadCnblogImages(blog.Content, this.tbox_imageDir.Text, this.tbox_rootDir.Text, this.tbox_siteUrl.Text, blog.Title);
             await typechoDal.AddBlogAsync(blog);
             blog.Content = previousContent;
+            blog.Tags = previousTags;
         }
 
         private void ResetProgress()
@@ -149,8 +151,9 @@ namespace cnblogs2typecho
 
             var tick = 100 / this.blogPages.Count;
 
-            foreach(var page in this.blogPages)
+            for (int i = 0; i < 25; i++)
             {
+                var page = this.blogPages[i];
                 foreach (var blog in page.Blogs)
                 {
                     await InsertNewBlogAsync(blog);
