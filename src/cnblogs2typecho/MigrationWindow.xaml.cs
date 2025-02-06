@@ -103,13 +103,20 @@ namespace cnblogs2typecho
 
         private async Task InsertNewBlogAsync(Blog blog)
         {
-            ImageDownloader imageDownloader = new ImageDownloader();
-            var previousContent = blog.Content;
-            var previousTags = blog.Tags;
-            blog.Content =  await imageDownloader.DownloadCnblogImages(blog.Content, this.tbox_imageDir.Text, this.tbox_rootDir.Text, this.tbox_siteUrl.Text, blog.Title);
-            await typechoDal.AddBlogAsync(blog);
-            blog.Content = previousContent;
-            blog.Tags = previousTags;
+            try
+            {
+                ImageDownloader imageDownloader = new ImageDownloader();
+                var previousContent = blog.Content;
+                var previousTags = blog.Tags;
+                blog.Content = await imageDownloader.DownloadCnblogImages(blog.Content, this.tbox_imageDir.Text, this.tbox_rootDir.Text, this.tbox_siteUrl.Text, blog.Title);
+                await typechoDal.AddBlogAsync(blog);
+                blog.Content = previousContent;
+                blog.Tags = previousTags;
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void ResetProgress()

@@ -28,17 +28,24 @@ namespace cnblogdownloader
                 if (System.IO.Path.GetExtension(imagePath).ToLower() == ".gif")
                     continue;
 
-                var newPath = baseDir + imagePath.Replace("/", "\\");
-                var waterMark = string.Format(BASEURL, siteUrl,articleName);
-                ExifEditor.DrawWatermark(newPath, waterMark);
+                try
+                {
+                    var newPath = baseDir + imagePath.Replace("/", "\\");
+                    var waterMark = string.Format(BASEURL, siteUrl, articleName);
+                    ExifEditor.DrawWatermark(newPath, waterMark);
 
-                if (System.IO.Path.GetExtension(imagePath).ToLower() == ".png")
-                {
-                    ExifEditor.EmbedTextWatermark(newPath, waterMark);
+                    if (System.IO.Path.GetExtension(imagePath).ToLower() == ".png")
+                    {
+                        ExifEditor.EmbedTextWatermark(newPath, waterMark);
+                    }
+                    else
+                    {
+                        ExifEditor.EmbedDefaultWatermark(newPath);
+                    }
                 }
-                else
+                catch
                 {
-                    ExifEditor.EmbedDefaultWatermark(newPath);
+                    continue;
                 }
             }
         }
