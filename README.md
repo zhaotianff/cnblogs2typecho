@@ -15,8 +15,8 @@ https://www.bilibili.com/video/BV1JxNgeeE2T/
 
 ## 界面截图
 ![登录](img/2.png)
-<p align="center">登录</p> 
-<br/>
+<p align="center">登录</p>   
+
 ![主界面](img/1.png)
 <p align="center">主界面</p> 
 <br/>
