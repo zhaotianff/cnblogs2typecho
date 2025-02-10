@@ -2,6 +2,7 @@
 using cnblogs2typecho.Crawler;
 using cnblogs2typecho.DAL;
 using cnblogs2typecho.Model;
+using cnblogs2typecho.Properties;
 using cnblogs2typecho.Web;
 using System.Collections.Generic;
 using System.Windows;
@@ -21,6 +22,7 @@ namespace cnblogs2typecho
         public MainWindow()
         {
             InitializeComponent();
+            LoadUserSettings();
         }
 
         private void btn_LoginCnblogs_Click(object sender, RoutedEventArgs e)
@@ -61,6 +63,8 @@ namespace cnblogs2typecho
                 return;
             }
 
+            WriteUserSettings();
+
             ProgressWindow progressWindow = new ProgressWindow();
             progressWindow.Show();
 
@@ -75,6 +79,26 @@ namespace cnblogs2typecho
         private void BlurWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             CefManager.Instance.Close();
+        }
+
+
+        private void LoadUserSettings()
+        {
+            this.tbox_Server.Text = Settings.Default["Server"].ToString();
+            this.tbox_User.Text = Settings.Default["User"].ToString();
+            this.pbx_Password.Password = Settings.Default["Password"].ToString();
+            this.tbox_Port.Text = Settings.Default["Port"].ToString();
+            this.tbox_Database.Text = Settings.Default["Database"].ToString();
+        }
+
+        private void WriteUserSettings()
+        {
+            Settings.Default["Server"] = this.tbox_Server.Text;
+            Settings.Default["User"] = this.tbox_User.Text;
+            Settings.Default["Password"] = this.pbx_Password.Password;
+            Settings.Default["Port"] = this.tbox_Port.Text;
+            Settings.Default["Database"] = this.tbox_Database.Text;
+            Settings.Default.Save();
         }
     }
 }
