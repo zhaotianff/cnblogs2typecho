@@ -138,6 +138,8 @@ namespace cnblogs2typecho.DbHelper
                 MySqlCommand mySqlCommand = new MySqlCommand();
                 mySqlCommand.CommandText = sql;
                 mySqlCommand.CommandType = CommandType.Text;
+                if (parameters != null)
+                    mySqlCommand.Parameters.AddRange(parameters);
                 mySqlCommand.Connection = con;
 
                 result = mySqlCommand.ExecuteScalar();

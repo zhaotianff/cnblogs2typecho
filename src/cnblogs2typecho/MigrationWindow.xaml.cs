@@ -41,7 +41,10 @@ namespace cnblogs2typecho
         private void list_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (this.list.SelectedItem == null)
+            {
+                CheckInsertOrUpdate(null);
                 return;
+            }
 
             var blog = this.list.SelectedItem as Blog;
 
@@ -61,10 +64,32 @@ namespace cnblogs2typecho
             try
             {
                 this.browser.LoadHtml(AppendHtmlHead(blog.Content));
+                CheckInsertOrUpdate(blog);
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void CheckInsertOrUpdate(Blog blog)
+        {
+            if(blog == null)
+            {
+                this.btn_SyncSelected.Visibility = Visibility.Visible;
+                this.btn_UpdateSelected.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            if(typechoDal.IsExistBlog(blog.Slug) == true)
+            {
+                this.btn_UpdateSelected.Visibility = Visibility.Visible;
+                this.btn_SyncSelected.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                this.btn_UpdateSelected.Visibility = Visibility.Collapsed;
+                this.btn_SyncSelected.Visibility = Visibility.Visible;
             }
         }
 
@@ -92,25 +117,39 @@ namespace cnblogs2typecho
         private async void btn_SyncSelected_Click(object sender, RoutedEventArgs e)
         {
             if (this.list.SelectedItem == null)
+            {
                 return;
+            }
 
             ResetProgress();
 
-            await InsertNewBlogAsync(this.list.SelectedItem as Blog);
+            var blog = this.list.SelectedItem as Blog;
+            await InsertNewBlogAsync(blog);
 
             AddProgress(100);
+
+            CheckInsertOrUpdate(blog);
         }
 
-        private async Task InsertNewBlogAsync(Blog blog)
+        private async Task InsertNewBlogAsync(Blog blog,bool isUpdate = false)
         {
             try
             {
                 ImageDownloader imageDownloader = new ImageDownloader();
-                var previousContent = blog.Content;
-                var previousTags = blog.Tags;
+                var previousCategory = blog.Category;
+                var previousTags = blog.Tags.ToArray();
                 blog.Content = await imageDownloader.DownloadCnblogImages(blog.Content, this.tbox_imageDir.Text, this.tbox_rootDir.Text, this.tbox_siteUrl.Text, blog.Title);
-                await typechoDal.AddBlogAsync(blog);
-                blog.Content = previousContent;
+
+                if(isUpdate == false)
+                {
+                    await typechoDal.AddBlogAsync(blog);
+                }
+                else
+                {
+                    await typechoDal.UpdateBlogAsync(blog);
+                }
+                
+                blog.Category = previousCategory;
                 blog.Tags = previousTags;
             }
             catch(Exception ex)
@@ -189,6 +228,8 @@ namespace cnblogs2typecho
 
             blog.Title = this.tbox_Title.Text;
             blog.CreateDate = this.dpk_CreateDate.SelectedDate.Value;
+
+            MessageBox.Show("保存成功");
         }
 
         private void btn_BrowseRootDir_Click(object sender, RoutedEventArgs e)
@@ -207,6 +248,21 @@ namespace cnblogs2typecho
             {
                 this.tbox_imageDir.Text = folderBrowserDialog.SelectedPath;
             }
+        }
+
+        private async void btn_UpdateSelected_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.list.SelectedItem == null)
+            {
+                return;
+            }
+
+            ResetProgress();
+
+            var blog = this.list.SelectedItem as Blog;
+            await InsertNewBlogAsync(blog, true);
+
+            AddProgress(100);
         }
     }
 }

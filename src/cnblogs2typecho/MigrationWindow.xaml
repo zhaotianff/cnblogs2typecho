@@ -51,7 +51,7 @@
                     <GroupBox Header="迁移设置" Grid.Column="2" Margin="10">
                         <StackPanel>
                             <Label Content="Slug" Margin="10"></Label>
-                            <TextBox Margin="10,0" Name="tbox_Slug"></TextBox>
+                            <TextBox Margin="10,0" Name="tbox_Slug" IsReadOnly="True"></TextBox>
 
                             <Label Content="标题" Margin="10"></Label>
                             <TextBox Margin="10,0" Name="tbox_Title"></TextBox>
@@ -60,7 +60,7 @@
                             <DatePicker Margin="10,0" Name="dpk_CreateDate"></DatePicker>
 
                             <Label Content="修改日期" Margin="10"></Label>
-                            <DatePicker Margin="10,0" IsEnabled="False" Name="dpk_ModifyDate"></DatePicker>
+                            <DatePicker Margin="10,0" Name="dpk_ModifyDate"></DatePicker>
 
                             <Label Content="分类" Margin="10"></Label>
                             <TextBox Margin="10,0" Name="tbox_Catetory"></TextBox>
@@ -91,6 +91,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Button Content="同步选中项" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncSelected" Click="btn_SyncSelected_Click"></Button>
+                        <Button Content="更新选中项" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_UpdateSelected" Click="btn_UpdateSelected_Click" Visibility="Collapsed"></Button>
                         <Button Content="同步当前页" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncCurrentPage" Click="btn_SyncCurrentPage_Click" Grid.Column="1"></Button>
                         <Button Content="同步全部页" VerticalAlignment="Center" Width="88" Height="28"  Name="btn_SyncAllPage" Click="btn_SyncAllPage_Click" Grid.Column="2"></Button>
                     </Grid>

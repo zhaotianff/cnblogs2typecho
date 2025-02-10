@@ -83,21 +83,59 @@ namespace cnblogs2typecho.DAL
                 new MySqlParameter("@likes",MySqlDbType.Int32){ Value = 0}
             };
 
-            var result = mariaDbHelper.ExecuteSql(sql, parameters);
+            try
+            {
+                var result = mariaDbHelper.ExecuteSql(sql, parameters);
 
-            if (result <= 0)
+                if (result <= 0)
+                    return false;
+
+                sql = "Select cid from typecho_contents order by cid desc";
+
+                var cidObj = mariaDbHelper.QueryFirst(sql);
+
+                if (cidObj == DBNull.Value)
+                {
+                    return false;
+                }
+
+                return CreateCatetoryAndTag(cidObj.ToString(), blog);
+            }
+            catch
+            {
                 return false;
-            
-            sql = "Select cid from typecho_contents order by cid desc";
+            }
+        }
 
-            var cidObj = mariaDbHelper.QueryFirst(sql);
+        private bool UpdateBlog(Blog blog)
+        {
+            var deleteContentResult = 0;
+            var deleteTagCategoryResult = 0;
 
-            if(cidObj == DBNull.Value)
+            try
+            {
+                var sql = "Select cid from typecho_contents Where slug = '" + blog.Slug + "'";
+                var cidObj = mariaDbHelper.QueryFirst(sql);
+
+                if (cidObj == DBNull.Value)
+                {
+                    return false;
+                }
+
+                sql = $"Delete from typecho_contents WHERE cid = {cidObj}";
+                deleteContentResult = mariaDbHelper.ExecuteSql(sql);
+                sql = $"Delete from typecho_relationships Where cid = {cidObj}";
+                deleteTagCategoryResult = mariaDbHelper.ExecuteSql(sql);
+
+                if (deleteContentResult == 0 || deleteTagCategoryResult == 0)
+                    return false;
+            }
+            catch
             {
                 return false;
             }
 
-            return CreateCatetoryAndTag(cidObj.ToString(), blog);
+            return AddBlog(blog);
         }
 
         public async Task<bool> AddBlogAsync(Blog blog)
@@ -107,6 +145,21 @@ namespace cnblogs2typecho.DAL
                 result =  AddBlog(blog);
             });
             return result;
+        }
+
+        public async Task<bool> UpdateBlogAsync(Blog blog)
+        {
+            var result = false;
+            await Task.Run(() => {
+                result = UpdateBlog(blog);
+            });
+            return result;
+        }
+
+        public bool IsExistBlog(string slug)
+        {
+            var sql = "Select * from typecho_contents Where slug = '" + slug + "'";
+            return mariaDbHelper.QueryFirst(sql) != null;
         }
 
         private bool CreateCatetoryAndTag(string cid,Blog blog)
